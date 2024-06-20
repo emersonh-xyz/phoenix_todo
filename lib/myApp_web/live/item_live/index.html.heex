@@ -9,7 +9,14 @@
 
 <.table id="items" rows={@streams.items}>
   <:col :let={{_id, item}}>
-    User Id: <%= item.user_id %>
+    <%= if item.complete do %>
+      <%!-- WIP --%>
+      <.link phx-click={JS.push("toggle")} data-confirm="Are you sure?">
+        Toggle
+      </.link>
+    <% else %>
+      <input type="checkbox" label="Complete" />
+    <% end %>
   </:col>
   <:col :let={{_id, item}} label="Title">
     <span class={"#{if item.complete do 'text-green-500 line-through' end}"}>
