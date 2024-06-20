@@ -1,0 +1,45 @@
+<.header>
+  Todo List
+  <:actions>
+    <.link patch={~p"/items/new"}>
+      <.button>New Item</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table id="items" rows={@streams.items}>
+  <:col :let={{_id, item}}>
+    User Id: <%= item.user_id %>
+  </:col>
+  <:col :let={{_id, item}} label="Title">
+    <span class={"#{if item.complete do 'text-green-500 line-through' end}"}>
+      <%= item.title %>
+    </span>
+  </:col>
+  <:col :let={{_id, item}} label="Complete"><%= item.complete %></:col>
+  <:action :let={{_id, item}}>
+    <div class="sr-only">
+      <.link navigate={~p"/items/#{item}"}>Show</.link>
+    </div>
+    <.link patch={~p"/items/#{item}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, item}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: item.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="item-modal" show on_cancel={JS.patch(~p"/items")}>
+  <.live_component
+    module={MyAppWeb.ItemLive.FormComponent}
+    id={@item.id || :new}
+    title={@page_title}
+    action={@live_action}
+    item={@item}
+    patch={~p"/items"}
+  />
+</.modal>
